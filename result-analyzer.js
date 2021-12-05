@@ -75,7 +75,7 @@ const printTable = (header, description, fn) => {
   console.log()
 }
 
-printTable('RMS', 'Root-mean-sequared of delays above mean ping + 3ms (ms, lower is better)', (data) => {
+printTable('RMS', 'Root-mean-squared of delays above mean ping + 3ms (ms, lower is better)', (data) => {
   return Math.sqrt(data.sumSquaredPenalty / data.received)
 })
 
@@ -83,7 +83,7 @@ printTable('Jitter', 'Number of packets above mean ping + 3ms (lower is better)'
   return data.jitter
 })
 
-printTable('Lost', 'Numbers of packets lost (no repsonse in 1000ms, lower is better)', (data) => {
+printTable('Lost', 'Numbers of packets lost (no response in 1000ms, lower is better)', (data) => {
   return data.lost
 })
 
