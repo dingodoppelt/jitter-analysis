@@ -87,7 +87,7 @@ function printResults () {
 }
 
 setTimeout(() => {
-    setInterval(sendPing, 10)
+    setInterval(sendPing, 1000/750)
 }, 1000)
 
 setInterval(printResults, 15000)
