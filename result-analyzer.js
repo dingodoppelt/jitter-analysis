@@ -80,16 +80,16 @@ printTable('RMS', 'Root-mean-squared of delays above mean ping + 3ms (ms, lower 
     return Math.sqrt(data.sumSquaredPenalty / data.received)
 })
 
-printTable('Jitter', 'Number of packets above mean ping + 3ms (lower is better)', (data) => {
+printTable('Jitter', 'Number of packets above/below mean ping +/- 3ms (lower is better)', (data) => {
     return data.jitter
 })
 
-printTable('Jitter', 'Percentage of packets above mean ping + 3ms (lower is better)', (data) => {
+printTable('Jitter', 'Percentage of packets above/below mean ping +/- 3ms (lower is better)', (data) => {
     return data.jitter / data.received
 })
 
-printTable('Lost', 'Numbers of packets lost (no response in 1000ms, lower is better)', (data) => {
-    return data.lost
+printTable('Lost', 'Percentage of packets lost (no response in 1000ms, lower is better)', (data) => {
+    return data.lost / data.received
 })
 
 printTable('Received', 'Number of packets received (higher is better)', (data) => {
