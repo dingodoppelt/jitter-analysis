@@ -2,8 +2,8 @@ const path = require('path')
 const glob = require('glob')
 const fs = require('fs')
 
-const args = Object.fromEntries(process.argv.slice(2).map(arg => arg.split('=')))
-const resultFiles = glob.sync('plays/private/results/*.log')
+const resultFiles = glob.sync(`${process.argv[2]}*.log`)
+const args = Object.fromEntries(resultFiles.map(k => [path.basename(k, '.log'), undefined]));
 
 const results = Object.fromEntries(Object.keys(args).map(pinger => {
   return [pinger, Object.fromEntries(Object.keys(args).map(remote => {
