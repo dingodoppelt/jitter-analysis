@@ -45,10 +45,11 @@ for (const resultFile of resultFiles) {
                     const meanPing = sumPing / totalPackets
                     for (const [pingTimeStr, count] of Object.entries(received)) {
                         const pingTime = +pingTimeStr
-                        const threshold = meanPing + 3
-                        if (pingTime > threshold) {
+                        const highThreshold = meanPing + 3
+                        const lowThreshold = meanPing - 3
+                        if (pingTime > highThreshold || pingTime < lowThreshold) {
                             jitter += count
-                            const penalty = pingTime - threshold
+                            const penalty = pingTime - highThreshold
                             sumSquaredPenalty += penalty * penalty * count
                         }
                     }
@@ -65,11 +66,11 @@ for (const resultFile of resultFiles) {
 
 const printTable = (header, description, fn) => {
     console.log('###', description, '###')
-    console.log([header, ...Object.keys(args)].join('\t'))
+    console.log([header.padEnd(10), ...Object.keys(args)].join('\t'))
     for (const [receiver, senders] of Object.entries(results)) {
-        console.log([receiver, ...Object.keys(args).map(senderKey => {
+        console.log([receiver.padEnd(10), ...Object.keys(args).map(senderKey => {
             const sender = senders[senderKey]
-            return fn(sender)
+            return fn(sender).toString().padEnd(18)
         })].join('\t'))
     }
     console.log()
@@ -81,6 +82,10 @@ printTable('RMS', 'Root-mean-squared of delays above mean ping + 3ms (ms, lower 
 
 printTable('Jitter', 'Number of packets above mean ping + 3ms (lower is better)', (data) => {
     return data.jitter
+})
+
+printTable('Jitter', 'Percentage of packets above mean ping + 3ms (lower is better)', (data) => {
+    return data.jitter / data.received
 })
 
 printTable('Lost', 'Numbers of packets lost (no response in 1000ms, lower is better)', (data) => {
