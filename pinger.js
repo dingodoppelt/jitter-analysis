@@ -3,11 +3,12 @@ const uuid = require('uuid')
 const { performance } = require('perf_hooks')
 
 const socket = createSocket('udp4')
-const port = 22111
+const port = 22222
 const sessionId = uuid.v4()
 socket.bind(port)
 
 class RemoteServer {
+  active = false
   pending = {}
   stats = {}
   constructor(id, ip) {
@@ -50,7 +51,7 @@ function sendPing () {
   const id = nextId++
   for (const server of remoteServers) {
     socket.send(Buffer.from(`?${sessionId}:${id}`), port, server.ip)
-    server.pingSent(id, performance.now())
+    if (server.active == true) { server.pingSent(id, performance.now()) }
   }
   return id
 }
@@ -68,9 +69,11 @@ socket.on('message', (message, remote) => {
   if (data[0] === '!' && sessionId === receivedSessionId) {
     // A pong response, save the statistics
     const server = remoteServerByIp[remote.address]
-    if (server) {
+    if (server.active) {
       server.pongReceived(id, performance.now())
       return
+    } else {
+      server.active = true
     }
   }
 })
