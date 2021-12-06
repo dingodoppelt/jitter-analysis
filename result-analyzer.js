@@ -10,6 +10,8 @@ const results = Object.fromEntries(Object.keys(args).map(pinger => {
         return [remote, {
             received: 0,
             jitter: 0,
+            lowest: 0,
+            highest: 0,
             lost: 0,
             sumPing: 0,
             sumSquaredPing: 0,
@@ -32,6 +34,8 @@ for (const resultFile of resultFiles) {
                     
                     let totalPackets = 0
                     let jitter = 0
+                    let lastLowest = 9999
+                    let lastHighest = 0
                     let sumSquaredPing = 0
                     let sumPing = 0
                     let sumSquaredPenalty = 0
@@ -47,6 +51,12 @@ for (const resultFile of resultFiles) {
                         const pingTime = +pingTimeStr
                         const highThreshold = meanPing + 3
                         const lowThreshold = meanPing - 3
+                        if (pingTime <= lastLowest) {
+                            lastLowest = pingTime
+                        }
+                        if (pingTime >= lastHighest) {
+                            lastHighest = pingTime
+                        }
                         if (pingTime > highThreshold || pingTime < lowThreshold) {
                             jitter += count
                             const penalty = pingTime - highThreshold
@@ -57,6 +67,8 @@ for (const resultFile of resultFiles) {
                     results[pingerName][remoteName].received += totalPackets
                     results[pingerName][remoteName].lost += lost
                     results[pingerName][remoteName].jitter += jitter
+                    results[pingerName][remoteName].lowest = lastLowest
+                    results[pingerName][remoteName].highest = lastHighest
                     results[pingerName][remoteName].sumPing += sumPing
                     results[pingerName][remoteName].sumSquaredPing += sumSquaredPing
                     results[pingerName][remoteName].sumSquaredPenalty += sumSquaredPenalty
@@ -88,14 +100,10 @@ printTable('Jitter', 'Percentage of packets above/below mean ping +/- 3ms (lower
     return data.jitter / data.received
 })
 
-printTable('Lost', 'Percentage of packets lost (no response in 1000ms, lower is better)', (data) => {
-    return data.lost / data.received
+printTable('Lost', 'Number of packets lost (no response in 1000ms, lower is better)', (data) => {
+    return data.lost
 })
 
-printTable('Received', 'Number of packets received (higher is better)', (data) => {
-    return data.received
-})
-
-printTable('Mean Ping', 'Average ping value (ms, lower is better)', (data) => {
-    return data.sumPing / data.received
+printTable('Avg/High/Low', 'Average/Highest/Lowest ping value (ms, lower is better)', (data) => {
+    return Math.round(data.sumPing / data.received) + '/' + data.highest + '/' + data.lowest
 })
