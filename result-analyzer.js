@@ -78,7 +78,7 @@ for (const resultFile of resultFiles) {
 
 const printTable = (header, description, fn) => {
     console.log('###', description, '###')
-    console.log([header.padEnd(10), ...Object.keys(args)].join('\t'))
+    console.log([header.padEnd(10), ...Object.keys(args)].join('\t\t'))
     for (const [receiver, senders] of Object.entries(results)) {
         console.log([receiver.padEnd(10), ...Object.keys(args).map(senderKey => {
             const sender = senders[senderKey]
