@@ -96,8 +96,8 @@ printTable('Jitter', 'Number of packets above/below mean ping +/- 3ms (lower is 
     return data.jitter
 })
 
-printTable('Jitter', 'Percentage of packets above/below mean ping +/- 3ms (lower is better)', (data) => {
-    return data.jitter / data.received
+printTable('Jitter', 'Number of packets above/below mean ping +/- 3ms per 1.000.000 packets (lower is better)', (data) => {
+    return (data.jitter / data.received) * 1000
 })
 
 printTable('Lost', 'Number of packets lost (no response in 1000ms, lower is better)', (data) => {
