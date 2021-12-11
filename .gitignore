@@ -1,5 +1,6 @@
 node_modules
 logs
+pssh_hosts
 *.log
 /pinger
 .DS_Store
